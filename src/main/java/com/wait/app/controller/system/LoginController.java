@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaIgnore;
 
 import cn.dev33.satoken.util.SaResult;
 import com.wait.app.domain.dto.user.UserInfoDTO;
+import com.wait.app.domain.param.login.WebLoginParam;
 import com.wait.app.domain.param.login.WechatLoginParam;
 import com.wait.app.service.LoginService;
 import io.swagger.annotations.Api;
@@ -34,6 +35,14 @@ public class LoginController extends BaseController{
     @PostMapping("/login/wechat")
     public SaResult wechatLogin(@RequestBody @NonNull WechatLoginParam wechatLoginParam){
         UserInfoDTO userInfoDTO  = loginService.wechatLogin(wechatLoginParam);
+        return new SaResult(SaResult.CODE_SUCCESS,"登录成功",userInfoDTO);
+    }
+
+    @SaIgnore
+    @ApiOperation("后台登录")
+    @PostMapping("/login/web")
+    public SaResult login(@RequestBody WebLoginParam webLoginParam){
+        UserInfoDTO userInfoDTO = loginService.webLogin(webLoginParam);
         return new SaResult(SaResult.CODE_SUCCESS,"登录成功",userInfoDTO);
     }
 

@@ -22,7 +22,7 @@
         creator_id,create_time,update_time
     </sql>
     <select id="getRoleByUserId" resultType="com.wait.app.domain.dto.role.RoleDTO">
-        select r.id,r.`name`,r.description,r.sort,r.enabled,r.`level` from role as r,user_role as ur
+        select r.id,r.`name`,r.description,r.sort,r.enabled,r.`key` from role as r,user_role as ur
             where ur.user_id = #{userId} and ur.role_id = r.id
     </select>
 </mapper>

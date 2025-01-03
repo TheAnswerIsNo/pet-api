@@ -1,8 +1,7 @@
 package com.wait.app.domain.dto.role;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.tangzc.autotable.annotation.AutoColumn;
-import com.tangzc.mpe.autotable.annotation.ColumnId;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,21 +16,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RoleDTO {
 
-    @ColumnId(mode = IdType.ASSIGN_UUID,comment = "id",length = 45)
+    @ApiModelProperty(value = "id")
     private String id;
 
-    @AutoColumn(comment = "名称",notNull = true)
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    @AutoColumn(comment = "描述")
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    @AutoColumn(comment = "排序",notNull = true,defaultValue = "0",length = 10)
+    @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    @AutoColumn(comment = "启用(0:禁用 1:启用)",notNull = true,defaultValue = "1",length = 10)
+    @ApiModelProperty(value = "启用")
     private Integer enabled;
 
-    @AutoColumn(comment = "等级(0:普通用户 1:骑手 2:商家 3:管理员)",notNull = true,defaultValue = "0",length = 10)
-    private Integer level;
+    @ApiModelProperty(value = "key(user:普通用户,admin:管理员)")
+    private String key;
 }

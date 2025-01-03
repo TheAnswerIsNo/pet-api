@@ -3,6 +3,8 @@ package com.wait.app.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.tangzc.autotable.annotation.AutoColumn;
 import com.tangzc.autotable.annotation.AutoTable;
+import com.tangzc.autotable.annotation.Index;
+import com.tangzc.autotable.annotation.enums.IndexTypeEnum;
 import com.tangzc.mpe.annotation.InsertFillTime;
 import com.tangzc.mpe.annotation.InsertUpdateFillTime;
 import com.tangzc.mpe.autotable.annotation.ColumnId;
@@ -27,7 +29,11 @@ public class User {
     @ColumnId(mode = IdType.ASSIGN_UUID,comment = "id",length = 45)
     private String id;
 
+    @AutoColumn(comment = "密码",length = 255)
+    private String password;
+
     @AutoColumn(comment = "手机号",length = 11,notNull = true)
+    @Index(name = "index_unique_phone",type = IndexTypeEnum.UNIQUE)
     private String phone;
 
     @AutoColumn(comment = "openId")

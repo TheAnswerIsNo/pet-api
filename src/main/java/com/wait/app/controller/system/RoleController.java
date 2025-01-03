@@ -1,6 +1,5 @@
 package com.wait.app.controller.system;
 
-import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.util.SaResult;
 
 import com.wait.app.domain.param.role.RoleSaveParam;
@@ -32,7 +31,6 @@ public class RoleController extends BaseController{
 
     @PostMapping(value = "/save")
     @ApiOperation("保存角色")
-    @SaIgnore
     public SaResult save(@RequestBody RoleSaveParam roleSaveParam){
         roleService.save(roleSaveParam,getUserId());
         return SaResult.ok("保存成功");

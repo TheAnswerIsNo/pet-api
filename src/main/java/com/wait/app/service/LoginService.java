@@ -1,5 +1,7 @@
 package com.wait.app.service;
 
+import cn.dev33.satoken.exception.SaTokenException;
+import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
@@ -16,6 +18,7 @@ import com.wait.app.domain.dto.wechat.WeChatLoginEmpowerDTO;
 import com.wait.app.domain.dto.wechat.WechatUserInfoDTO;
 import com.wait.app.domain.entity.User;
 import com.wait.app.domain.enumeration.*;
+import com.wait.app.domain.param.login.WebLoginParam;
 import com.wait.app.domain.param.login.WechatLoginParam;
 import com.wait.app.repository.RoleRepository;
 import com.wait.app.repository.UserRepository;
@@ -167,5 +170,19 @@ public class LoginService {
      */
     public void logout() {
         StpUtil.logout();
+    }
+
+    public UserInfoDTO webLogin(WebLoginParam webLoginParam) {
+        String phone = webLoginParam.getPhone();
+        String password = webLoginParam.getPassword();
+        User user = userService.getUserByPhone(phone);
+        if (Objects.isNull(user)) {
+            throw new SaTokenException(400, "该手机号不存在");
+        }
+
+        if (!BCrypt.checkpw(password, user.getPassword())) {
+            throw new SaTokenException(400, "密码错误");
+        }
+        return this.publicLogin(user, DeviceEnum.WEB.getValue());
     }
 }
