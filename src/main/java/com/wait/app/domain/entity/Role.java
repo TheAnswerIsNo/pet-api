@@ -28,8 +28,8 @@ public class Role {
     @ColumnId(mode = IdType.ASSIGN_UUID,comment = "id",length = 45)
     private String id;
 
-    @AutoColumn(comment = "key(user:普通用户 admin:管理员)",notNull = true)
-    private String key;
+    @AutoColumn(comment = "roleKey(user:普通用户 admin:管理员)",notNull = true)
+    private String roleKey;
 
     @AutoColumn(comment = "名称",notNull = true)
     private String name;

@@ -1,14 +1,16 @@
 package com.wait.app.core.config;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -17,25 +19,21 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class JacksonConfig {
 
-    @Value("${spring.jackson.date-format}")
-    private String pattern;
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-        
-        return builder -> {
-            
-            // LocalDate 和 LocalDateTime 的格式化方式
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(pattern);
-            DateTimeFormatter dateTimeFormatter =  DateTimeFormatter.ofPattern(pattern);
-            
-            // 设置 LocalDate 和 LocalDateTime 反序列化器
-            builder.deserializers(new LocalDateDeserializer(dateFormatter));
-            builder.deserializers(new LocalDateTimeDeserializer(dateTimeFormatter));
-            
-            // 设置 LocalDate 和 LocalDateTime 序列化器
-            builder.serializers(new LocalDateSerializer(dateFormatter));
-            builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
-        };
+    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+        ObjectMapper objectMapper = builder.dateFormat(new SimpleDateFormat(DATE_FORMAT))
+                .build();
+        objectMapper.setSerializerFactory(objectMapper.getSerializerFactory()
+                .withSerializerModifier(new MyBeanSerializerModifier()));
+        SerializerProvider serializerProvider = objectMapper.getSerializerProvider();
+        serializerProvider.setNullValueSerializer(new CustomizeNullJsonSerializer
+                .NullObjectJsonSerializer());
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+        objectMapper.registerModule(module);
+        return objectMapper;
     }
 }

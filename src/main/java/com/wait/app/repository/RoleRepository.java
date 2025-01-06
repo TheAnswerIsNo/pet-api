@@ -28,19 +28,19 @@ public class RoleRepository extends BaseRepository<RoleMapper, Role> {
     /**
      * 根据level获取角色
      *
-     * @param level
-     * @return
+     * @param roleKey roleKey
+     * @return 角色
      */
-    public Role getRoleByLevel(Integer level) {
+    public Role getRoleByLevel(Integer roleKey) {
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Role::getKey,level);
+        queryWrapper.eq(Role::getRoleKey,roleKey);
         return roleMapper.selectOne(queryWrapper);
     }
 
     /**
      * 根据userId获取角色
      * @param userId userId
-     * @return
+     * @return 角色
      */
     public List<RoleDTO> getRoleByUserId(String userId) {
         return roleMapper.getRoleByUserId(userId);

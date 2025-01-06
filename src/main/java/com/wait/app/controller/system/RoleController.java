@@ -2,15 +2,15 @@ package com.wait.app.controller.system;
 
 import cn.dev33.satoken.util.SaResult;
 
+import com.wait.app.domain.dto.role.RoleDTO;
 import com.wait.app.domain.param.role.RoleSaveParam;
 import com.wait.app.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  *
@@ -34,6 +34,13 @@ public class RoleController extends BaseController{
     public SaResult save(@RequestBody RoleSaveParam roleSaveParam){
         roleService.save(roleSaveParam,getUserId());
         return SaResult.ok("保存成功");
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("角色列表")
+    public SaResult list(){
+        List<RoleDTO> list = roleService.list();
+        return SaResult.data(list);
     }
 
 }

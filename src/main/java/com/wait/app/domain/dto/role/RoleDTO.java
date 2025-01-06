@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * @author 天
@@ -31,6 +33,9 @@ public class RoleDTO {
     @ApiModelProperty(value = "启用")
     private Integer enabled;
 
-    @ApiModelProperty(value = "key(user:普通用户,admin:管理员)")
-    private String key;
+    @ApiModelProperty(value = "roleKey(user:普通用户,admin:管理员)")
+    private String roleKey;
+
+    @ApiModelProperty(value = "创建时间")
+    private LocalDateTime createTime;
 }

@@ -74,7 +74,7 @@ public class LoginService {
                 .form(WeChatInfoEnum.GRANT_TYPE_LOGIN.getName(), WeChatInfoEnum.GRANT_TYPE_LOGIN.getValue())
                 .execute().body();
         long end = System.currentTimeMillis();
-        log.info(String.format("请求openid服务 -> code编码：%s；总耗时：%d(ms)",wechatLoginParam.getCode(), end - begin));
+        log.info(String.format("请求openid服务 -> code编码：%s；总耗时：%d(ms)", wechatLoginParam.getCode(), end - begin));
 
         WeChatLoginEmpowerDTO weChatLoginEmpowerDTO = JSONUtil.toBean(s, WeChatLoginEmpowerDTO.class);
         log.info(String.format("请求openid服务结果 -> openid：%s；unionid：%s；session_key：%s；错误信息：%s；", weChatLoginEmpowerDTO.getOpenid(),
@@ -93,55 +93,55 @@ public class LoginService {
 
         WeChatAccessTokenDTO weChatAccessTokenDTO = JSONUtil.toBean(token, WeChatAccessTokenDTO.class);
         log.info(String.format("请求access_token服务服务结果 -> access_token码：%s；有效时间：%s",
-                weChatAccessTokenDTO.getAccessToken(),weChatAccessTokenDTO.getExpiresIn()));
+                weChatAccessTokenDTO.getAccessToken(), weChatAccessTokenDTO.getExpiresIn()));
 
         //获取手机号
         HashMap<String, String> map = new HashMap<>();
         map.put(WeChatInfoEnum.CODE.getName(), wechatLoginParam.getPhoneCode());
         String jsonPrettyStr = JSONUtil.toJsonPrettyStr(map);
         begin = System.currentTimeMillis();
-        String body = HttpRequest.post(WeChatURLEnum.WECHAT_PHONE.getName()+weChatAccessTokenDTO.getAccessToken())
+        String body = HttpRequest.post(WeChatURLEnum.WECHAT_PHONE.getName() + weChatAccessTokenDTO.getAccessToken())
                 .body(jsonPrettyStr).execute().body();
         end = System.currentTimeMillis();
-        log.info(String.format("请求电话号码服务 -> 花费时间：%s",end - begin));
+        log.info(String.format("请求电话号码服务 -> 花费时间：%s", end - begin));
 
         JSONObject entries = JSONUtil.parseObj(body);
         JSONObject phoneInfo = entries.getJSONObject("phone_info");
         String phoneNumber = phoneInfo.getStr("phoneNumber");
-        log.info(String.format("请求电话号服务 -> 电话号码：%s;",phoneNumber));
+        log.info(String.format("请求电话号服务 -> 电话号码：%s;", phoneNumber));
         User userByOpenId = userRepository.getUserByOpenId(weChatLoginEmpowerDTO.getOpenid());
         User userByPhone = userRepository.getUserByPhone(phoneNumber);
         User user = User.builder()
                 .phone(phoneNumber)
                 .openId(weChatLoginEmpowerDTO.getOpenid())
                 .build();
-        if (ObjUtil.isNull(userByOpenId) && ObjUtil.isNull(userByPhone)){
+        if (ObjUtil.isNull(userByOpenId) && ObjUtil.isNull(userByPhone)) {
             userRepository.save(user);
-            userService.distribute(user.getId(), List.of(roleRepository.getRoleByLevel(RoleKeyEnum.USER.getLevel()).getId()));
-        }else if (Objects.isNull(userByOpenId)){
+            userService.distribute(user.getId(), List.of(roleRepository.getRoleByLevel(RoleKeyEnum.USER.getRoleKey()).getId()));
+        } else if (Objects.isNull(userByOpenId)) {
             user.setId(userByPhone.getId());
             userRepository.updateById(user);
-        } else if(Objects.nonNull(userByPhone)){
+        } else if (Objects.nonNull(userByPhone)) {
             BeanUtil.copyProperties(userByOpenId, user);
         }
         // 异步获取用户信息
-        CompletableFuture.runAsync(()->{
+        CompletableFuture.runAsync(() -> {
             long sbegin = System.currentTimeMillis();
             String wechatUserInfo = HttpRequest.get(WeChatURLEnum.WECHAT_USER_INFO.getName())
                     .header(Header.USER_AGENT, "Mozilla/5.0")
-                    .form(WeChatInfoEnum.ACCESS_TOKEN.getName(),weChatAccessTokenDTO.getAccessToken() )
+                    .form(WeChatInfoEnum.ACCESS_TOKEN.getName(), weChatAccessTokenDTO.getAccessToken())
                     .form(WeChatInfoEnum.OPENID.getName(), weChatLoginEmpowerDTO.getOpenid())
                     .execute().body();
             long send = System.currentTimeMillis();
             log.info(String.format("请求userInfo服务 -> 总耗时：%d(ms)", send - sbegin));
             WechatUserInfoDTO wechatUserInfoDTO = JSONUtil.toBean(wechatUserInfo, WechatUserInfoDTO.class);
-            log.info(String.format("请求userInfo服务服务结果 -> nickname：%s；sex: %s", wechatUserInfoDTO.getNickname(),wechatUserInfoDTO.getSex()));
+            log.info(String.format("请求userInfo服务服务结果 -> nickname：%s；sex: %s", wechatUserInfoDTO.getNickname(), wechatUserInfoDTO.getSex()));
             userRepository.updateById(User.builder()
                     .id(user.getId())
                     .nickname(wechatUserInfoDTO.getNickname())
                     .sex(wechatUserInfoDTO.getSex())
                     .build());
-        },executor);
+        }, executor);
         return publicLogin(user, DeviceEnum.APPLET.getValue());
     }
 
@@ -149,19 +149,20 @@ public class LoginService {
      * 公用登录方法
      */
     private UserInfoDTO publicLogin(User user, String device) {
+
         String userId = user.getId();
         String loginId = PrefixEnum.USER.getValue() + userId;
-        StpUtil.login(loginId, device);
         UserInfoDTO userInfoDTO = BeanUtil.copyProperties(user, UserInfoDTO.class);
         List<RoleDTO> roleDTOList = roleRepository.getRoleByUserId(userId);
+        userInfoDTO.setRoles(roleDTOList);
+        StpUtil.login(loginId, device);
         // 异步序列化进redis
         CompletableFuture.runAsync(() -> {
             SaSession session = StpUtil.getSessionByLoginId(loginId);
             // 添加角色
             session.set(SaSession.USER, JSONUtil.toJsonStr(user)).
                     set(SaSession.ROLE_LIST, JSONUtil.toJsonStr(roleDTOList));
-        },executor);
-        userInfoDTO.setRoles(roleDTOList);
+        }, executor);
         return userInfoDTO;
     }
 

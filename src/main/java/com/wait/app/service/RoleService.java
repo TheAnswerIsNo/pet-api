@@ -3,11 +3,14 @@ package com.wait.app.service;
 import cn.hutool.core.bean.BeanUtil;
 
 import cn.hutool.core.util.StrUtil;
+import com.wait.app.domain.dto.role.RoleDTO;
 import com.wait.app.domain.entity.Role;
 import com.wait.app.domain.param.role.RoleSaveParam;
 import com.wait.app.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  *
@@ -36,5 +39,10 @@ public class RoleService {
         }else {
             roleRepository.updateById(role);
         }
+    }
+
+    public List<RoleDTO> list() {
+        List<Role> list = roleRepository.lambdaQuery().orderByDesc(Role::getSort).orderByDesc(Role::getCreateTime).list();
+        return BeanUtil.copyToList(list, RoleDTO.class);
     }
 }

@@ -30,6 +30,6 @@ public class RoleSaveParam {
     @ApiModelProperty(value = "启用(0:禁用 1:启用)")
     private Integer enabled;
 
-    @ApiModelProperty(value = "key(user:普通用户 admin:管理员)")
-    private String key;
+    @ApiModelProperty(value = "roleKey(user:普通用户 admin:管理员)")
+    private String roleKey;
 }

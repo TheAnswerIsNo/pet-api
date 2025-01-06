@@ -3,6 +3,8 @@ package com.wait.app.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.tangzc.autotable.annotation.AutoColumn;
 import com.tangzc.autotable.annotation.AutoTable;
+import com.tangzc.autotable.annotation.Index;
+import com.tangzc.autotable.annotation.enums.IndexTypeEnum;
 import com.tangzc.mpe.annotation.InsertFillTime;
 import com.tangzc.mpe.annotation.InsertUpdateFillTime;
 import com.tangzc.mpe.autotable.annotation.ColumnId;
@@ -29,6 +31,7 @@ public class UserRole {
     private String id;
 
     @AutoColumn(comment = "用户id",notNull = true,length = 45)
+    @Index(name = "idx_user_id",type = IndexTypeEnum.NORMAL)
     private String userId;
 
     @AutoColumn(comment = "角色id",notNull = true,length = 45)

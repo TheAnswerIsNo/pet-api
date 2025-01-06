@@ -22,5 +22,5 @@ public enum RoleKeyEnum {
 
     private final String name;
 
-    private final Integer level;
+    private final Integer roleKey;
 }

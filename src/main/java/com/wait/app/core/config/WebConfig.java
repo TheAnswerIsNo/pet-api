@@ -59,9 +59,9 @@ public class WebConfig implements WebMvcConfigurer {
         // token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
         config.setActiveTimeout(-1);
         // 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
-        config.setIsConcurrent(false);
+        config.setIsConcurrent(true);
         // 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
-        config.setIsShare(true);
+        config.setIsShare(false);
         // token风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
         config.setTokenStyle("random-128");
         // 是否在初始化配置时打印版本字符画
