@@ -11,19 +11,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  *
  * @author 天
- * Time: 2024/9/10 14:47
+ * Time: 2024/9/10 14:25
  */
 @Data
-@AutoTable(comment = "角色表")
+@AutoTable(comment = "商品表")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class Goods{
 
     @ColumnId(mode = IdType.ASSIGN_UUID,comment = "id",length = 45)
     private String id;
@@ -31,20 +32,11 @@ public class Role {
     @AutoColumn(comment = "名称",notNull = true)
     private String name;
 
-    @AutoColumn(comment = "描述")
-    private String description;
+    @AutoColumn(comment = "单价",notNull = true)
+    private BigDecimal price;
 
-    @AutoColumn(comment = "排序",notNull = true,defaultValue = "0",length = 10)
-    private Integer sort;
-
-    @AutoColumn(comment = "启用(0:禁用 1:启用)",notNull = true,defaultValue = "1",length = 10)
-    private Integer enabled;
-
-    @AutoColumn(comment = "等级(0:普通用户 1:管理员)",notNull = true,defaultValue = "0",length = 10)
-    private Integer level;
-
-    @AutoColumn(comment = "创建人id",notNull = true,length = 45)
-    private String creatorId;
+    @AutoColumn(comment = "是否上架(0:否 1:是)",notNull = true,defaultValue = "1",length = 10)
+    private Integer isPutAway;
 
     @InsertFillTime
     @AutoColumn(comment = "创建时间",notNull = true)

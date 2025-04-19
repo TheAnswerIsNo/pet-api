@@ -2,6 +2,7 @@ package com.wait.app.controller.system;
 
 import cn.dev33.satoken.util.SaResult;
 
+import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.role.RoleDTO;
 import com.wait.app.domain.param.role.RoleSaveParam;
 import com.wait.app.service.RoleService;
@@ -20,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/role")
 @Api(tags = "角色",value = "角色")
-public class RoleController extends BaseController{
+public class RoleController extends BaseController {
 
     private final RoleService roleService;
 

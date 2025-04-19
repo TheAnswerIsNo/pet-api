@@ -4,19 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- *
  * @author 天
- * Time: 2024/9/15 11:00
  */
+
 @Getter
 @AllArgsConstructor
-public enum RoleKeyEnum {
+public enum IsPutAwayEnum {
 
-    USER("普通用户",0),
 
-    ADMIN("管理员",1);
+    PUT_AWAY("上架",1),
+    DIS_PUT_AWAY("下架",0);
 
     private final String name;
 
-    private final Integer roleKey;
+    private final Integer value;
 }

@@ -11,19 +11,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  *
  * @author 天
- * Time: 2024/9/10 14:47
+ * Time: 2024/9/10 14:36
  */
 @Data
-@AutoTable(comment = "角色表")
+@AutoTable(comment = "商铺表")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class Shop {
 
     @ColumnId(mode = IdType.ASSIGN_UUID,comment = "id",length = 45)
     private String id;
@@ -34,17 +35,23 @@ public class Role {
     @AutoColumn(comment = "描述")
     private String description;
 
-    @AutoColumn(comment = "排序",notNull = true,defaultValue = "0",length = 10)
-    private Integer sort;
+    @AutoColumn(comment = "类型id(对应字典表id)",notNull = true,length = 45)
+    private String typeId;
 
-    @AutoColumn(comment = "启用(0:禁用 1:启用)",notNull = true,defaultValue = "1",length = 10)
-    private Integer enabled;
+    @AutoColumn(comment = "配送费",notNull = true)
+    private BigDecimal deliveryCost;
 
-    @AutoColumn(comment = "等级(0:普通用户 1:管理员)",notNull = true,defaultValue = "0",length = 10)
-    private Integer level;
+    @AutoColumn(comment = "开业时间",notNull = true)
+    private LocalDateTime openTime;
 
-    @AutoColumn(comment = "创建人id",notNull = true,length = 45)
-    private String creatorId;
+    @AutoColumn(comment = "休息时间",notNull = true)
+    private LocalDateTime restTime;
+
+    @AutoColumn(comment = "联系方式",notNull = true,length = 11)
+    private String phone;
+
+    @AutoColumn(comment = "店长id",notNull = true,length = 45)
+    private String userId;
 
     @InsertFillTime
     @AutoColumn(comment = "创建时间",notNull = true)

@@ -3,6 +3,7 @@ package com.wait.app.controller.system;
 import cn.dev33.satoken.annotation.SaIgnore;
 
 import cn.dev33.satoken.util.SaResult;
+import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.user.UserInfoDTO;
 import com.wait.app.domain.param.login.WebLoginParam;
 import com.wait.app.domain.param.login.WechatLoginParam;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @Api(tags = "登录",value = "登录")
-public class LoginController extends BaseController{
+public class LoginController extends BaseController {
 
     private final LoginService loginService;
 

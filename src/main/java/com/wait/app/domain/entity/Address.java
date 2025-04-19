@@ -16,35 +16,32 @@ import java.time.LocalDateTime;
 /**
  *
  * @author 天
- * Time: 2024/9/10 14:47
+ * Time: 2024/10/16 13:38
  */
 @Data
-@AutoTable(comment = "角色表")
+@AutoTable(comment = "地址表")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class Address {
 
     @ColumnId(mode = IdType.ASSIGN_UUID,comment = "id",length = 45)
     private String id;
 
-    @AutoColumn(comment = "名称",notNull = true)
+    @AutoColumn(comment = "用户id",notNull = true,length = 45)
+    private String userId;
+
+    @AutoColumn(comment = "名字",notNull = true)
     private String name;
 
-    @AutoColumn(comment = "描述")
-    private String description;
+    @AutoColumn(comment = "手机号",notNull = true,length = 11)
+    private String phone;
 
-    @AutoColumn(comment = "排序",notNull = true,defaultValue = "0",length = 10)
-    private Integer sort;
+    @AutoColumn(comment = "详细地址",notNull = true)
+    private String info;
 
-    @AutoColumn(comment = "启用(0:禁用 1:启用)",notNull = true,defaultValue = "1",length = 10)
-    private Integer enabled;
-
-    @AutoColumn(comment = "等级(0:普通用户 1:管理员)",notNull = true,defaultValue = "0",length = 10)
-    private Integer level;
-
-    @AutoColumn(comment = "创建人id",notNull = true,length = 45)
-    private String creatorId;
+    @AutoColumn(comment = "门牌号",notNull = true)
+    private String houseNumber;
 
     @InsertFillTime
     @AutoColumn(comment = "创建时间",notNull = true)

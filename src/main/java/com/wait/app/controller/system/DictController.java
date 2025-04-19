@@ -3,6 +3,7 @@ package com.wait.app.controller.system;
 import cn.dev33.satoken.annotation.SaIgnore;
 
 import cn.dev33.satoken.util.SaResult;
+import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.dict.DictListDTO;
 import com.wait.app.domain.param.dict.DictSaveParam;
 import com.wait.app.service.DictService;
@@ -23,7 +24,7 @@ import java.util.List;
 @RestController
 @Api(tags = "字典",value = "字典")
 @RequestMapping("/dict")
-public class DictController extends BaseController{
+public class DictController extends BaseController {
 
     private final DictService dictService;
 

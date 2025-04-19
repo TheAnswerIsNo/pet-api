@@ -2,6 +2,7 @@ package com.wait.app.controller.system;
 
 
 import cn.dev33.satoken.util.SaResult;
+import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.user.UserInfoDTO;
 import com.wait.app.service.UserService;
 import io.swagger.annotations.Api;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 @Api(tags = "用户",value = "用户")
-public class UserController extends BaseController{
+public class UserController extends BaseController {
 
     private final UserService userService;
 

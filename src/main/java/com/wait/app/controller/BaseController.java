@@ -1,4 +1,4 @@
-package com.wait.app.controller.system;
+package com.wait.app.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.wait.app.domain.enumeration.PrefixEnum;
