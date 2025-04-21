@@ -2,14 +2,19 @@ package com.wait.app.service;
 
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 
 import com.wait.app.domain.dto.role.RoleDTO;
 import com.wait.app.domain.dto.user.UserInfoDTO;
 import com.wait.app.domain.entity.User;
 import com.wait.app.domain.entity.UserRole;
+import com.wait.app.domain.param.user.UserListParam;
 import com.wait.app.repository.UserRepository;
 import com.wait.app.repository.UserRoleRepository;
+import com.wait.app.utils.page.PageUtil;
+import com.wait.app.utils.page.ResponseDTOWithPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,5 +62,20 @@ public class UserService {
 
     public User getUserByPhone(String phone) {
         return userRepository.lambdaQuery().eq(User::getPhone,phone).one();
+    }
+
+    /**
+     * 用户列表
+     * @param userListParam userListParam
+     * @return  ResponseDTOWithPage<UserInfoDTO>
+     */
+    public ResponseDTOWithPage<UserInfoDTO> list(UserListParam userListParam) {
+        PageUtil.startPage(userListParam, true, User.class);
+        List<User> list = userRepository.lambdaQuery()
+                .like(StrUtil.isNotBlank(userListParam.getNickname()),User::getNickname, userListParam.getNickname())
+                .orderByDesc(User::getCreateTime)
+                .list();
+        List<UserInfoDTO> result = BeanUtil.copyToList(list, UserInfoDTO.class);
+        return PageUtil.getListDTO(result,userListParam);
     }
 }

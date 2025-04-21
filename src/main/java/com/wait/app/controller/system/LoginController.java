@@ -1,7 +1,5 @@
 package com.wait.app.controller.system;
 
-import cn.dev33.satoken.annotation.SaIgnore;
-
 import cn.dev33.satoken.util.SaResult;
 import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.user.UserInfoDTO;
@@ -31,7 +29,6 @@ public class LoginController extends BaseController {
         this.loginService = loginService;
     }
 
-    @SaIgnore
     @ApiOperation(value = "微信登录")
     @PostMapping("/login/wechat")
     public SaResult wechatLogin(@RequestBody @NonNull WechatLoginParam wechatLoginParam){
@@ -39,7 +36,6 @@ public class LoginController extends BaseController {
         return new SaResult(SaResult.CODE_SUCCESS,"登录成功",userInfoDTO);
     }
 
-    @SaIgnore
     @ApiOperation("后台登录")
     @PostMapping("/login/web")
     public SaResult login(@RequestBody WebLoginParam webLoginParam){
@@ -48,7 +44,7 @@ public class LoginController extends BaseController {
     }
 
     @ApiOperation(value = "注销")
-    @RequestMapping(method = RequestMethod.POST,value = "/logout")
+    @PostMapping(value = "/logout")
     public SaResult logout(){
         loginService.logout();
         return SaResult.ok("注销成功");

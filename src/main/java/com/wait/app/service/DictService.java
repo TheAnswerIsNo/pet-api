@@ -35,7 +35,9 @@ public class DictService {
      * @return List<DictListDTO>
      */
     public List<DictListDTO> list(String type) {
-        List<Dict> dictList = dictRepository.lambdaQuery().eq(StrUtil.isNotEmpty(type),Dict::getType, type).list();
+        List<Dict> dictList = dictRepository.lambdaQuery().eq(StrUtil.isNotEmpty(type),Dict::getType, type)
+                .orderByDesc(Dict::getCreateTime)
+                .orderByDesc(Dict::getSort).list();
         List<DictListDTO> dictListDTOList = BeanUtil.copyToList(dictList, DictListDTO.class)
                 .stream().sorted(Comparator.comparing(DictListDTO::getSort).reversed()).toList();
         List<DictListDTO> parentDict = dictListDTOList.stream().filter(item -> StrUtil.isEmpty(item.getParentId())).toList();
@@ -64,6 +66,14 @@ public class DictService {
     @Transactional(rollbackFor = Exception.class)
     public void save(DictSaveParam dictSaveParam) {
         Dict dict = BeanUtil.copyProperties(dictSaveParam, Dict.class);
-        dictRepository.save(dict);
+        dictRepository.saveOrUpdate(dict);
+    }
+
+    /**
+     * 删除字典
+     * @param id id
+     */
+    public void delete(String id) {
+        dictRepository.removeById(id);
     }
 }

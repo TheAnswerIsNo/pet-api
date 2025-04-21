@@ -1,7 +1,5 @@
 package com.wait.app.controller.system;
 
-import cn.dev33.satoken.annotation.SaIgnore;
-
 import cn.dev33.satoken.util.SaResult;
 import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.dict.DictListDTO;
@@ -33,7 +31,6 @@ public class DictController extends BaseController {
         this.dictService = dictService;
     }
 
-    @SaIgnore
     @GetMapping("/list")
     @ApiOperation(value = "指定字典列表")
     public SaResult list(@RequestParam(required = false) String type){
@@ -41,11 +38,17 @@ public class DictController extends BaseController {
         return SaResult.data(list);
     }
 
-    @SaIgnore
     @PostMapping("/save")
     @ApiOperation(value = "保存字典")
     public SaResult save(@RequestBody @NonNull DictSaveParam dictSaveParam){
         dictService.save(dictSaveParam);
         return SaResult.ok("保存成功");
+    }
+
+    @GetMapping("/delete")
+    @ApiOperation(value = "删除字典")
+    public SaResult delete(@RequestParam String id){
+        dictService.delete(id);
+        return SaResult.ok("删除成功");
     }
 }
