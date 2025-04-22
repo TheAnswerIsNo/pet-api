@@ -12,11 +12,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum RoleKeyEnum {
 
-    USER("普通用户",0),
+    USER("普通用户","user"),
 
-    ADMIN("管理员",1);
+    ADMIN("管理员","admin");
 
     private final String name;
 
-    private final Integer roleKey;
+    private final String roleKey;
 }

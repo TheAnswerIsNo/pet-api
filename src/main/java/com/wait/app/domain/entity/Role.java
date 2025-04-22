@@ -40,8 +40,8 @@ public class Role {
     @AutoColumn(comment = "启用(0:禁用 1:启用)",notNull = true,defaultValue = "1",length = 10)
     private Integer enabled;
 
-    @AutoColumn(comment = "等级(0:普通用户 1:管理员)",notNull = true,defaultValue = "0",length = 10)
-    private Integer level;
+    @AutoColumn(comment = "roleKey(user:普通用户,admin:管理员)",notNull = true,defaultValue = "user")
+    private String roleKey;
 
     @AutoColumn(comment = "创建人id",notNull = true,length = 45)
     private String creatorId;

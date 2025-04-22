@@ -12,8 +12,10 @@ import com.wait.app.domain.dto.wechatPayCallback.Resource;
 import com.wait.app.domain.dto.wechatPayCallback.WechatPayCallback;
 import com.wait.app.domain.dto.wechatPayCallback.WechatResponse;
 import com.wait.app.domain.enumeration.WeChatInfoEnum;
+import com.wait.app.domain.param.order.OrderListParam;
 import com.wait.app.domain.param.order.OrderSubmitParam;
 import com.wait.app.service.OrderService;
+import com.wait.app.utils.page.ResponseDTOWithPage;
 import com.wechat.pay.java.service.payments.jsapi.model.PrepayWithRequestPaymentResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +36,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.List;
 
 /**
  * @author 天
@@ -75,8 +76,8 @@ public class OrderController extends BaseController {
 
     @ApiOperation("订单列表")
     @GetMapping("/list")
-    public SaResult list(@RequestParam(required = false) Integer status){
-        List<OrderListDTO> list =  orderService.list(getUserId(),status);
+    public SaResult list(@ModelAttribute OrderListParam orderListParam){
+        ResponseDTOWithPage<OrderListDTO> list =  orderService.list(getUserId(),orderListParam);
         return SaResult.data(list);
     }
 

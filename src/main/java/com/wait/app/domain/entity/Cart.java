@@ -15,43 +15,30 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- *
  * @author 天
- * Time: 2024/9/10 14:36
+ * Time: 2025/4/23 5:51
  */
 @Data
-@AutoTable(comment = "商铺表")
+@AutoTable(comment = "购物车表")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Shop {
+public class Cart {
 
     @ColumnId(mode = IdType.ASSIGN_UUID,comment = "id",length = 45)
     private String id;
 
-    @AutoColumn(comment = "名称",notNull = true)
+    @AutoColumn(comment = "商品id",notNull = true,length = 45)
+    private String goodsId;
+
+    @AutoColumn(comment = "商品名称",notNull = true)
     private String name;
 
-    @AutoColumn(comment = "描述")
-    private String description;
+    @AutoColumn(comment = "单价",notNull = true)
+    private BigDecimal price;
 
-    @AutoColumn(comment = "类型id(对应字典表id)",notNull = true,length = 45)
-    private String typeId;
-
-    @AutoColumn(comment = "配送费",notNull = true)
-    private BigDecimal deliveryCost;
-
-    @AutoColumn(comment = "开业时间",notNull = true)
-    private LocalDateTime openTime;
-
-    @AutoColumn(comment = "休息时间",notNull = true)
-    private LocalDateTime restTime;
-
-    @AutoColumn(comment = "联系方式",notNull = true,length = 11)
-    private String phone;
-
-    @AutoColumn(comment = "店长id",notNull = true,length = 45)
-    private String userId;
+    @AutoColumn(comment = "数量",notNull = true)
+    private Integer number;
 
     @InsertFillTime
     @AutoColumn(comment = "创建时间",notNull = true)

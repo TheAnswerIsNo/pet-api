@@ -24,17 +24,23 @@ public class OrderListDTO {
     @ApiModelProperty(value = "id")
     private String id;
 
+    @ApiModelProperty(value = "用户id")
+    private String userId;
+
+    @ApiModelProperty(value = "手机号")
+    private String phone;
+
     @ApiModelProperty(value = "总价")
     private BigDecimal totalPrice;
 
     @ApiModelProperty(value = "总数量")
     private Integer totalNumber;
 
-    @ApiModelProperty(value = "订单状态(0:未付款 1:制作中 2:配送中 3:已送达 4:已完成 5:订单取消)")
+    @ApiModelProperty(value = "订单状态(0:未付款 1:送货中 2:已送达 3:已完成 4:订单取消)")
     private Integer status;
 
-    @ApiModelProperty(value = "接单时间")
-    private LocalDateTime takeOrderTime;
+    @ApiModelProperty(value = "创建时间")
+    private LocalDateTime createTime;
 
     @ApiModelProperty(value = "订单明细")
     private List<OrderListDetail> orderListDetailList = new ArrayList<>();

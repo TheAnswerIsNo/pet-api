@@ -10,12 +10,17 @@ import com.wait.app.domain.dto.order.OrderPayDTO;
 import com.wait.app.domain.dto.wechatPayCallback.DecryptedSuccessData;
 import com.wait.app.domain.entity.OrderDetail;
 import com.wait.app.domain.entity.TOrder;
+import com.wait.app.domain.entity.User;
 import com.wait.app.domain.enumeration.OrderStatusEnum;
 import com.wait.app.domain.enumeration.PrefixEnum;
 import com.wait.app.domain.enumeration.WeChatInfoEnum;
+import com.wait.app.domain.param.order.OrderListParam;
 import com.wait.app.domain.param.order.OrderSubmitParam;
 import com.wait.app.repository.OrderDetailRepository;
 import com.wait.app.repository.OrderRepository;
+import com.wait.app.repository.UserRepository;
+import com.wait.app.utils.page.PageUtil;
+import com.wait.app.utils.page.ResponseDTOWithPage;
 import com.wechat.pay.java.core.Config;
 import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
 import com.wechat.pay.java.service.payments.jsapi.model.Amount;
@@ -46,14 +51,17 @@ public class OrderService {
 
     private final OrderDetailRepository orderDetailRepository;
 
+    private final UserRepository userRepository;
+
     private Config payConfig;
 
     private final RedisTemplate<String, Object> objectRedisTemplate;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, RedisTemplate<String, Object> objectRedisTemplate) {
+    public OrderService(OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository, RedisTemplate<String, Object> objectRedisTemplate) {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.userRepository = userRepository;
         this.objectRedisTemplate = objectRedisTemplate;
     }
 
@@ -171,24 +179,33 @@ public class OrderService {
     /**
      * 订单列表
      * @param userId userId
-     * @param status 状态
+     * @param orderListParam orderListParam
      */
-    public List<OrderListDTO> list(String userId, Integer status) {
+    public ResponseDTOWithPage<OrderListDTO> list(String userId, OrderListParam orderListParam) {
+        PageUtil.startPage(orderListParam,true,TOrder.class);
         List<TOrder> orderList = orderRepository.lambdaQuery()
                 .eq(TOrder::getUserId, userId)
-                .eq(ObjUtil.isNotEmpty(status), TOrder::getStatus, status).list();
-        List<OrderListDTO> list = BeanUtil.copyToList(orderList, OrderListDTO.class);
-        List<String> orderIds = orderList.stream().map(TOrder::getId).toList();
-        if (CollUtil.isEmpty(orderIds)) {
-            return list;
+                .eq(ObjUtil.isNotEmpty(orderListParam.getStatus()), TOrder::getStatus, orderListParam.getStatus()).list();
+        if (CollUtil.isEmpty(orderList)) {
+            return new ResponseDTOWithPage<>(List.of(),0L);
         }
+        List<OrderListDTO> list = BeanUtil.copyToList(orderList, OrderListDTO.class);
+        ResponseDTOWithPage<OrderListDTO> result = PageUtil.getListDTO(list, orderListParam);
+        List<String> orderIds = orderList.stream().map(TOrder::getId).toList();
+        // 完善订单详情
         Map<String, List<OrderDetail>> orderDetailMap = orderDetailRepository.lambdaQuery()
                 .in(OrderDetail::getOrderId, orderIds)
                 .list().stream().collect(Collectors.groupingBy(OrderDetail::getOrderId));
-        list.forEach(item -> {
+        // 完善订单用户信息
+        List<String> userIds = orderList.stream().map(TOrder::getUserId).toList();
+        Map<String, List<User>> userMap = userRepository.lambdaQuery().in(User::getId, userIds)
+                .list().stream().collect(Collectors.groupingBy(User::getId));
+        result.getList().forEach(item -> {
             List<OrderListDTO.OrderListDetail> orderListDetails = BeanUtil.copyToList(orderDetailMap.get(item.getId()), OrderListDTO.OrderListDetail.class);
             item.setOrderListDetailList(orderListDetails);
+            item.setPhone(userMap.get(item.getUserId()).get(0).getPhone());
         });
-        return list;
+
+        return result;
     }
 }

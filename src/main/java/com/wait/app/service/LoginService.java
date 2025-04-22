@@ -117,7 +117,7 @@ public class LoginService {
                 .build();
         if (ObjUtil.isNull(userByOpenId) && ObjUtil.isNull(userByPhone)) {
             userRepository.save(user);
-            userService.distribute(user.getId(), List.of(roleRepository.getRoleByLevel(RoleKeyEnum.USER.getRoleKey()).getId()));
+            userService.distribute(user.getId(), List.of(roleRepository.getRoleByRoleKey(RoleKeyEnum.USER.getRoleKey()).getId()));
         } else if (Objects.isNull(userByOpenId)) {
             user.setId(userByPhone.getId());
             userRepository.updateById(user);
