@@ -11,6 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AttachmentEnum {
 
+    PET("宠物","pet"),
+
     GOODS("商品","goods");
 
     private final String name;

@@ -1,6 +1,14 @@
 package com.wait.app.controller;
 
+import cn.dev33.satoken.util.SaResult;
+import com.wait.app.domain.param.adopt.ApplyAdoptParam;
+import com.wait.app.domain.param.adopt.GiveUpAdoptParam;
+import com.wait.app.service.AdoptService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,5 +19,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "领养",value = "领养")
 @RequestMapping("/adopt")
-public class AdoptController {
+public class AdoptController extends BaseController{
+
+    private final AdoptService adoptService;
+
+    @Autowired
+    public AdoptController(AdoptService adoptService) {
+        this.adoptService = adoptService;
+
+    }
+
+    @PostMapping(value = "/give-up")
+    @ApiOperation(value = "送养")
+    public SaResult giveUp(GiveUpAdoptParam giveUpAdoptParam){
+        adoptService.giveUp(giveUpAdoptParam,getUserId());
+        return SaResult.ok("发布宠物信息成功");
+    }
+
+    @PostMapping(value = "/apply")
+    @ApiOperation(value = "领养")
+    public SaResult apply(@RequestBody ApplyAdoptParam applyAdoptParam){
+        adoptService.apply(applyAdoptParam,getUserId());
+        return SaResult.ok("领养宠物申请成功");
+    }
 }
