@@ -8,6 +8,7 @@ import cn.hutool.core.util.ObjUtil;
 import com.wait.app.domain.dto.order.OrderListDTO;
 import com.wait.app.domain.dto.order.OrderPayDTO;
 import com.wait.app.domain.dto.wechatPayCallback.DecryptedSuccessData;
+import com.wait.app.domain.entity.Cart;
 import com.wait.app.domain.entity.OrderDetail;
 import com.wait.app.domain.entity.TOrder;
 import com.wait.app.domain.entity.User;
@@ -16,6 +17,7 @@ import com.wait.app.domain.enumeration.PrefixEnum;
 import com.wait.app.domain.enumeration.WeChatInfoEnum;
 import com.wait.app.domain.param.order.OrderListParam;
 import com.wait.app.domain.param.order.OrderSubmitParam;
+import com.wait.app.repository.CartRepository;
 import com.wait.app.repository.OrderDetailRepository;
 import com.wait.app.repository.OrderRepository;
 import com.wait.app.repository.UserRepository;
@@ -57,12 +59,15 @@ public class OrderService {
 
     private final RedisTemplate<String, Object> objectRedisTemplate;
 
+    private final CartRepository cartRepository;
+
     @Autowired
-    public OrderService(OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository, RedisTemplate<String, Object> objectRedisTemplate) {
+    public OrderService(OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository, RedisTemplate<String, Object> objectRedisTemplate, CartRepository cartRepository) {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.userRepository = userRepository;
         this.objectRedisTemplate = objectRedisTemplate;
+        this.cartRepository = cartRepository;
     }
 
     /**
@@ -72,6 +77,8 @@ public class OrderService {
      */
     @Transactional(rollbackFor = Exception.class)
     public OrderPayDTO submit(OrderSubmitParam orderSubmitParam, String userId) {
+        // 删除购物车
+        cartRepository.lambdaUpdate().in(Cart::getId,orderSubmitParam.getCartIds()).remove();
 //        User user = (User) StpUtil.getSession().get(SaSession.USER);
         // 1.创建订单参数
         TOrder order = TOrder.builder().userId(userId)

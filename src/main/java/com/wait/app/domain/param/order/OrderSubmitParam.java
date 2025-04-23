@@ -24,6 +24,9 @@ public class OrderSubmitParam {
     @ApiModelProperty(value = "订单明细")
     private List<OrderSubmitDetail> orderSubmitDetailList;
 
+    @ApiModelProperty(value = "购物车id")
+    private List<String> cartIds;
+
     @Data
     public static class OrderSubmitDetail{
 
