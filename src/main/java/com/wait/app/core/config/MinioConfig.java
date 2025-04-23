@@ -1,10 +1,18 @@
 package com.wait.app.core.config;
 
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
+import io.minio.errors.*;
 import lombok.Data;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @author 天
@@ -35,10 +43,16 @@ public class MinioConfig {
     private String virtualUrl;
 
     @Bean
+    @SneakyThrows
     public MinioClient minioClient(){
-        return MinioClient.builder()
+        MinioClient minioClient = MinioClient.builder()
                 .endpoint(endpoint)
-                .credentials(accessKey,secretKey)
+                .credentials(accessKey, secretKey)
                 .build();
+        boolean exists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        if (!exists) {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+        }
+        return minioClient;
     }
 }
