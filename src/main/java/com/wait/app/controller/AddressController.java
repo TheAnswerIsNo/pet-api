@@ -1,7 +1,6 @@
-package com.wait.app.controller.applet;
+package com.wait.app.controller;
 
 import cn.dev33.satoken.util.SaResult;
-import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.address.AddressListDTO;
 import com.wait.app.domain.param.address.AddressSaveParam;
 import com.wait.app.service.AddressService;

@@ -1,8 +1,7 @@
-package com.wait.app.controller.system;
+package com.wait.app.controller;
 
 
 import cn.dev33.satoken.util.SaResult;
-import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.user.UserInfoDTO;
 import com.wait.app.domain.param.user.UserListParam;
 import com.wait.app.service.UserService;

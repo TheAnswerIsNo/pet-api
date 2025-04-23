@@ -11,7 +11,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AttachmentEnum {
 
-    SHOP("商铺","shop"),
     GOODS("商品","goods");
 
     private final String name;

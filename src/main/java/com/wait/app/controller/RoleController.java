@@ -1,8 +1,6 @@
-package com.wait.app.controller.system;
+package com.wait.app.controller;
 
 import cn.dev33.satoken.util.SaResult;
-
-import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.role.RoleDTO;
 import com.wait.app.domain.param.role.RoleSaveParam;
 import com.wait.app.service.RoleService;

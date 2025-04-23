@@ -1,10 +1,9 @@
-package com.wait.app.controller.applet;
+package com.wait.app.controller;
 
 import cn.dev33.satoken.util.SaResult;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONUtil;
 
-import com.wait.app.controller.BaseController;
 import com.wait.app.domain.dto.order.OrderListDTO;
 import com.wait.app.domain.dto.order.OrderPayDTO;
 import com.wait.app.domain.dto.wechatPayCallback.DecryptedSuccessData;

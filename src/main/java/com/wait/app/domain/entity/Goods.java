@@ -38,8 +38,8 @@ public class Goods{
     @AutoColumn(comment = "单价",notNull = true)
     private BigDecimal price;
 
-    @AutoColumn(comment = "是否上架(0:否 1:是)",notNull = true,defaultValue = "1",length = 10)
-    private Integer isPutAway;
+    @AutoColumn(comment = "描述")
+    private String description;
 
     @InsertFillTime
     @AutoColumn(comment = "创建时间",notNull = true)
