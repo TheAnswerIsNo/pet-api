@@ -36,7 +36,7 @@ public class GoodsController extends BaseController {
         return SaResult.data(list);
     }
 
-    @PostMapping("/delete")
+    @GetMapping("/delete")
     @ApiOperation(value = "删除商品")
     public SaResult delete(@RequestParam String goodsId){
         goodsService.delete(goodsId);

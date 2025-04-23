@@ -66,7 +66,10 @@ public class GoodsService {
     @Transactional(rollbackFor = Exception.class)
     public void delete(String goodsId) {
         goodsRepository.removeById(goodsId);
-        attachmentService.removeAttachment(AttachmentEnum.GOODS.getValue(), goodsId);
+        List<Attachment> attachment = attachmentService.getAttachment(AttachmentEnum.GOODS.getValue(), goodsId);
+        if (CollUtil.isNotEmpty(attachment)){
+            attachmentService.removeAttachment(AttachmentEnum.GOODS.getValue(), goodsId);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

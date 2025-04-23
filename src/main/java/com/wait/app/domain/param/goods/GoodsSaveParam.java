@@ -26,6 +26,9 @@ public class GoodsSaveParam {
     @ApiModelProperty(value = "名称")
     private String name;
 
+    @ApiModelProperty(value = "所属类别id")
+    private String dictId;
+
     @ApiModelProperty(value = "单价")
     private BigDecimal price;
 
