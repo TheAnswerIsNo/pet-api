@@ -1,6 +1,5 @@
 package com.wait.app.domain.dto.order;
 
-import com.tangzc.autotable.annotation.AutoColumn;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,13 +46,20 @@ public class OrderListDTO {
 
     @Data
     public static class OrderListDetail{
-        @AutoColumn(comment = "商品名称",notNull = true)
+
+        @ApiModelProperty(value = "商品id")
+        private String id;
+
+        @ApiModelProperty(value = "商品名称")
         private String name;
 
-        @AutoColumn(comment = "单价",notNull = true)
+        @ApiModelProperty(value = "单价")
         private BigDecimal price;
 
-        @AutoColumn(comment = "数量",notNull = true)
+        @ApiModelProperty(value = "数量")
         private Integer number;
+
+        @ApiModelProperty(value = "照片")
+        private List<String> photos;
     }
 }

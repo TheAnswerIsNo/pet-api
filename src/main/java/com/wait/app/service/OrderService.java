@@ -8,10 +8,8 @@ import cn.hutool.core.util.ObjUtil;
 import com.wait.app.domain.dto.order.OrderListDTO;
 import com.wait.app.domain.dto.order.OrderPayDTO;
 import com.wait.app.domain.dto.wechatPayCallback.DecryptedSuccessData;
-import com.wait.app.domain.entity.Cart;
-import com.wait.app.domain.entity.OrderDetail;
-import com.wait.app.domain.entity.TOrder;
-import com.wait.app.domain.entity.User;
+import com.wait.app.domain.entity.*;
+import com.wait.app.domain.enumeration.AttachmentEnum;
 import com.wait.app.domain.enumeration.OrderStatusEnum;
 import com.wait.app.domain.enumeration.PrefixEnum;
 import com.wait.app.domain.enumeration.WeChatInfoEnum;
@@ -36,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,13 +60,16 @@ public class OrderService {
 
     private final CartRepository cartRepository;
 
+    private final AttachmentService attachmentService;
+
     @Autowired
-    public OrderService(OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository, RedisTemplate<String, Object> objectRedisTemplate, CartRepository cartRepository) {
+    public OrderService(OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository, RedisTemplate<String, Object> objectRedisTemplate, CartRepository cartRepository, AttachmentService attachmentService) {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.userRepository = userRepository;
         this.objectRedisTemplate = objectRedisTemplate;
         this.cartRepository = cartRepository;
+        this.attachmentService = attachmentService;
     }
 
     /**
@@ -200,15 +202,32 @@ public class OrderService {
         ResponseDTOWithPage<OrderListDTO> result = PageUtil.getListDTO(list, orderListParam);
         List<String> orderIds = orderList.stream().map(TOrder::getId).toList();
         // 完善订单详情
-        Map<String, List<OrderDetail>> orderDetailMap = orderDetailRepository.lambdaQuery()
+        List<OrderDetail> orderDetails = orderDetailRepository.lambdaQuery()
                 .in(OrderDetail::getOrderId, orderIds)
-                .list().stream().collect(Collectors.groupingBy(OrderDetail::getOrderId));
+                .list();
+        Map<String, List<OrderDetail>> orderDetailMap = orderDetails.stream().collect(Collectors.groupingBy(OrderDetail::getOrderId));
         // 完善订单用户信息
         List<String> userIds = orderList.stream().map(TOrder::getUserId).toList();
         Map<String, List<User>> userMap = userRepository.lambdaQuery().in(User::getId, userIds)
                 .list().stream().collect(Collectors.groupingBy(User::getId));
+        // 添加图片
+        // 获取商品ids
+        List<String> goodsIds = orderDetails.stream().map(OrderDetail::getGoodsId).toList();
+        Map<String, List<Attachment>> attachmentMap = attachmentService.getAttachment(AttachmentEnum.GOODS.getValue(), goodsIds)
+                .stream().collect(Collectors.groupingBy(Attachment::getOwnerId));
         result.getList().forEach(item -> {
             List<OrderListDTO.OrderListDetail> orderListDetails = BeanUtil.copyToList(orderDetailMap.get(item.getId()), OrderListDTO.OrderListDetail.class);
+            for (OrderListDTO.OrderListDetail orderListDetail : orderListDetails) {
+                List<Attachment> attachmentList = attachmentMap.getOrDefault(orderListDetail.getId(), List.of());
+                if (CollUtil.isNotEmpty(attachmentList)){
+                    List<String> photos = new ArrayList<>();
+                    for (Attachment attachment : attachmentList) {
+                        String url = attachmentService.getAttachmentUrl(attachment.getObjName(), null);
+                        photos.add(url);
+                    }
+                    orderListDetail.setPhotos(photos);
+                }
+            }
             item.setOrderListDetailList(orderListDetails);
             item.setPhone(userMap.get(item.getUserId()).get(0).getPhone());
         });
