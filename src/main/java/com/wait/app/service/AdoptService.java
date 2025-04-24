@@ -8,6 +8,7 @@ import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.wait.app.domain.dto.adopt.AdoptListDTO;
+import com.wait.app.domain.dto.adopt.IdentificationDTO;
 import com.wait.app.domain.entity.ApplyAdoptRecord;
 import com.wait.app.domain.entity.Attachment;
 import com.wait.app.domain.entity.GiveUpAdoptRecord;
@@ -131,19 +132,19 @@ public class AdoptService {
      * @param photo photo
      * @return String
      */
-    public String identification(MultipartFile photo) {
+    public List<String> identification(MultipartFile photo) {
         try {
             // 获取图片base64
             String base64 = Base64.getEncoder().encodeToString(photo.getBytes());
 
             String url = "https://jmdwsbocr.market.alicloudapi.com/image/recognition/animal";
             String appcode = "26ce0a654aa542ea96c779ca367b54cd";
-            Map<String, String> query = new HashMap<>();
+            Map<String, Object> query = new HashMap<>();
             query.put("base64", base64);
             HttpResponse response = HttpUtil.createPost(url)
+                    .form(query)
                     .header("Authorization", "APPCODE " + appcode)
-                    .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
-                    .body(JSONUtil.toJsonStr(query)).execute();
+                    .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8").execute();
             // {
             //  "code": 200,//返回码，详见返回码说明
             //  "msg": "成功",//返回码对应描述
@@ -157,15 +158,17 @@ public class AdoptService {
             //    ]
             //  }
             //}
-            Map<String, Object> responseMap = JSONUtil.toBean(response.body(), Map.class);
-            if (Integer.parseInt(responseMap.get("code").toString()) == 400){
+            log.info("宠物识别接口返回--------"+response.body());
+            IdentificationDTO identificationDTO = JSONUtil.toBean(response.body(), IdentificationDTO.class);
+            if (identificationDTO.getCode() == 400){
                 throw new SaTokenException(400,"识别图片不准确");
-            }else if (Integer.parseInt(responseMap.get("code").toString()) == 500){
+            }else if (identificationDTO.getCode() == 500){
                 throw new SaTokenException(500,"识别系统异常");
             }
-            return responseMap.get("name").toString();
+            IdentificationDTO.Result data = identificationDTO.getData();
+            return data.getResults().stream().map(IdentificationDTO.Info::getName).toList();
         }catch (Exception e){
-            log.error("宠物识别失败"+e.getMessage(),e);
+            log.error("宠物识别失败   "+e.getMessage(),e);
             throw new SaTokenException("宠物识别失败");
         }
 

@@ -51,10 +51,10 @@ public class AdoptController extends BaseController{
         return SaResult.data(list);
     }
 
-    @GetMapping(value = "/identification")
+    @PostMapping(value = "/identification")
     @ApiOperation(value = "宠物识别")
     public SaResult identification(MultipartFile photo){
-        String petType = adoptService.identification(photo);
+        List<String> petType = adoptService.identification(photo);
         return SaResult.data(petType);
     }
 

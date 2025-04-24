@@ -158,7 +158,7 @@ public class OrderService {
         // 修改订单状态
         TOrder order = TOrder.builder()
                 .id(orderId)
-                .status(OrderStatusEnum.WFK.getValue())
+                .status(OrderStatusEnum.SHZ.getValue())
                 .build();
         orderRepository.updateById(order);
 
