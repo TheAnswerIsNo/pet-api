@@ -1,14 +1,15 @@
 package com.wait.app.controller;
 
 import cn.dev33.satoken.util.SaResult;
+import com.wait.app.domain.dto.dynamic.DynamicListDTO;
 import com.wait.app.domain.param.dynamic.DynamicAddParam;
 import com.wait.app.service.DynamicService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  *
@@ -33,4 +34,20 @@ public class DynamicController extends BaseController {
         dynamicService.add(dynamicAddParam,getUserId());
         return SaResult.ok("发布成功");
     }
+
+    @GetMapping(value = "/list")
+    @ApiOperation(value = "动态列表")
+    public SaResult list(@RequestParam Integer type){
+        List<DynamicListDTO> list = dynamicService.list(type,getUserId());
+        return SaResult.data(list);
+    }
+
+    @GetMapping(value = "/delete")
+    @ApiOperation(value = "删除动态")
+    public SaResult delete(@RequestParam String id){
+        dynamicService.delete(id);
+        return SaResult.ok("删除成功");
+    }
+
+
 }

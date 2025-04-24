@@ -48,7 +48,7 @@ public class OrderListDTO {
     public static class OrderListDetail{
 
         @ApiModelProperty(value = "商品id")
-        private String id;
+        private String goodsId;
 
         @ApiModelProperty(value = "商品名称")
         private String name;

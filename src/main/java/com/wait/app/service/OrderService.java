@@ -216,9 +216,11 @@ public class OrderService {
         Map<String, List<Attachment>> attachmentMap = attachmentService.getAttachment(AttachmentEnum.GOODS.getValue(), goodsIds)
                 .stream().collect(Collectors.groupingBy(Attachment::getOwnerId));
         result.getList().forEach(item -> {
-            List<OrderListDTO.OrderListDetail> orderListDetails = BeanUtil.copyToList(orderDetailMap.get(item.getId()), OrderListDTO.OrderListDetail.class);
-            for (OrderListDTO.OrderListDetail orderListDetail : orderListDetails) {
-                List<Attachment> attachmentList = attachmentMap.getOrDefault(orderListDetail.getId(), List.of());
+            List<OrderListDTO.OrderListDetail> orderListDetails = new ArrayList<>();
+            List<OrderDetail> orderDetailList = orderDetailMap.get(item.getId());
+            for (OrderDetail orderDetail : orderDetailList) {
+                OrderListDTO.OrderListDetail orderListDetail = BeanUtil.copyProperties(orderDetail, OrderListDTO.OrderListDetail.class);
+                List<Attachment> attachmentList = attachmentMap.getOrDefault(orderListDetail.getGoodsId(), List.of());
                 if (CollUtil.isNotEmpty(attachmentList)){
                     List<String> photos = new ArrayList<>();
                     for (Attachment attachment : attachmentList) {
@@ -227,6 +229,7 @@ public class OrderService {
                     }
                     orderListDetail.setPhotos(photos);
                 }
+                orderListDetails.add(orderListDetail);
             }
             item.setOrderListDetailList(orderListDetails);
             item.setPhone(userMap.get(item.getUserId()).get(0).getPhone());

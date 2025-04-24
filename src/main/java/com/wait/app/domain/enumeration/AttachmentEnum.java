@@ -11,6 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AttachmentEnum {
 
+    DYNAMIC("动态","dynamic"),
+
     PET("宠物","pet"),
 
     GOODS("商品","goods");
