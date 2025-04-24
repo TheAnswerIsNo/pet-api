@@ -48,7 +48,7 @@ public class GiveUpAdoptParam {
     private String hair;
 
     @ApiModelProperty( value = "特点" )
-    private String characteristics;
+    private List<String> characteristics;
 
     @ApiModelProperty( value = "描述" )
     private String description;

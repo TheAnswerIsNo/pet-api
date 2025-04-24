@@ -2,6 +2,7 @@ package com.wait.app.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.json.JSONUtil;
 import com.wait.app.domain.entity.ApplyAdoptRecord;
 import com.wait.app.domain.entity.GiveUpAdoptRecord;
 import com.wait.app.domain.entity.Pet;
@@ -47,6 +48,7 @@ public class AdoptService {
     @Transactional(rollbackFor = Exception.class)
     public void giveUp(GiveUpAdoptParam giveUpAdoptParam, String userId) {
         Pet pet = BeanUtil.copyProperties(giveUpAdoptParam, Pet.class);
+        pet.setCharacteristics(JSONUtil.toJsonStr(giveUpAdoptParam.getCharacteristics()));
         petRepository.save(pet);
         GiveUpAdoptRecord giveUpAdoptRecord = GiveUpAdoptRecord.builder()
                 .petId(pet.getId())
