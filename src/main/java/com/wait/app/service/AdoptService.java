@@ -2,8 +2,11 @@ package com.wait.app.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.wait.app.domain.dto.adopt.AdoptListDTO;
 import com.wait.app.domain.entity.ApplyAdoptRecord;
+import com.wait.app.domain.entity.Attachment;
 import com.wait.app.domain.entity.GiveUpAdoptRecord;
 import com.wait.app.domain.entity.Pet;
 import com.wait.app.domain.enumeration.AttachmentEnum;
@@ -15,6 +18,11 @@ import com.wait.app.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -72,5 +80,45 @@ public class AdoptService {
         ApplyAdoptRecord applyAdoptRecord = BeanUtil.copyProperties(applyAdoptParam, ApplyAdoptRecord.class);
         applyAdoptRecord.setUserId(userId);
         applyAdoptRecordRepository.save(applyAdoptRecord);
+    }
+
+    /**
+     * 领养列表
+     * @param type type
+     * @return List<AdoptListDTO>
+     */
+    public List<AdoptListDTO> list(String type) {
+        List<Pet> petList = petRepository.lambdaQuery().eq(StrUtil.isNotBlank(type), Pet::getType, type)
+                .orderByDesc(Pet::getCreateTime)
+                .list();
+        if (CollUtil.isEmpty(petList)){
+            return List.of();
+        }
+        List<String> petIds = petList.stream().map(Pet::getId).toList();
+        Map<String, List<GiveUpAdoptRecord>> giveUpAdoptRecordMap = giveUpAdoptRecordRepository.lambdaQuery().in(GiveUpAdoptRecord::getPetId, petIds)
+                .orderByDesc(GiveUpAdoptRecord::getCreateTime)
+                .list().stream().collect(Collectors.groupingBy(GiveUpAdoptRecord::getPetId));
+        List<AdoptListDTO> result = new ArrayList<>();
+        // 获取图片
+        Map<String, List<Attachment>> attachmentMap = attachmentService.getAttachment(AttachmentEnum.PET.getValue(), petIds)
+                .stream().collect(Collectors.groupingBy(Attachment::getOwnerId));
+        for (Pet pet : petList) {
+            AdoptListDTO adoptListDTO = BeanUtil.copyProperties(pet, AdoptListDTO.class);
+            adoptListDTO.setCharacteristics(JSONUtil.toList(pet.getCharacteristics(), String.class));
+            GiveUpAdoptRecord giveUpAdoptRecord = giveUpAdoptRecordMap.get(pet.getId()).get(0);
+            adoptListDTO.setGiveUpAdoptRecordId(giveUpAdoptRecord.getId());
+            adoptListDTO.setDescription(giveUpAdoptRecord.getDescription());
+            adoptListDTO.setUserId(giveUpAdoptRecord.getUserId());
+            // 添加图片
+            List<String> photos = new ArrayList<>();
+            List<Attachment> attachmentList = attachmentMap.get(pet.getId());
+            for (Attachment attachment : attachmentList) {
+                String url = attachmentService.getAttachmentUrl(attachment.getObjName(), null);
+                photos.add(url);
+            }
+            adoptListDTO.setPhotos(photos);
+            result.add(adoptListDTO);
+        }
+        return result;
     }
 }

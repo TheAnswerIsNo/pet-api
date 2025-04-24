@@ -1,16 +1,16 @@
 package com.wait.app.controller;
 
 import cn.dev33.satoken.util.SaResult;
+import com.wait.app.domain.dto.adopt.AdoptListDTO;
 import com.wait.app.domain.param.adopt.ApplyAdoptParam;
 import com.wait.app.domain.param.adopt.GiveUpAdoptParam;
 import com.wait.app.service.AdoptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author 天
@@ -41,5 +41,12 @@ public class AdoptController extends BaseController{
     public SaResult apply(@RequestBody ApplyAdoptParam applyAdoptParam){
         adoptService.apply(applyAdoptParam,getUserId());
         return SaResult.ok("领养宠物申请成功");
+    }
+
+    @GetMapping(value = "/list")
+    @ApiOperation(value = "领养列表")
+    public SaResult apply(@RequestParam String type){
+        List<AdoptListDTO> list = adoptService.list(type);
+        return SaResult.data(list);
     }
 }
