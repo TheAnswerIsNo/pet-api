@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -49,4 +50,12 @@ public class AdoptController extends BaseController{
         List<AdoptListDTO> list = adoptService.list(type);
         return SaResult.data(list);
     }
+
+    @GetMapping(value = "/identification")
+    @ApiOperation(value = "宠物识别")
+    public SaResult identification(MultipartFile photo){
+        String petType = adoptService.identification(photo);
+        return SaResult.data(petType);
+    }
+
 }

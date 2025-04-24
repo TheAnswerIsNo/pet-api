@@ -1,8 +1,11 @@
 package com.wait.app.service;
 
+import cn.dev33.satoken.exception.SaTokenException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.wait.app.domain.dto.adopt.AdoptListDTO;
 import com.wait.app.domain.entity.ApplyAdoptRecord;
@@ -15,13 +18,13 @@ import com.wait.app.domain.param.adopt.GiveUpAdoptParam;
 import com.wait.app.repository.ApplyAdoptRecordRepository;
 import com.wait.app.repository.GiveUpAdoptRecordRepository;
 import com.wait.app.repository.PetRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
  * Time: 2025/4/23 23:31
  */
 @Service
+@Log4j2
 public class AdoptService {
 
     private final PetRepository petRepository;
@@ -120,5 +124,50 @@ public class AdoptService {
             result.add(adoptListDTO);
         }
         return result;
+    }
+
+    /**
+     * 宠物识别
+     * @param photo photo
+     * @return String
+     */
+    public String identification(MultipartFile photo) {
+        try {
+            // 获取图片base64
+            String base64 = Base64.getEncoder().encodeToString(photo.getBytes());
+
+            String url = "https://jmdwsbocr.market.alicloudapi.com/image/recognition/animal";
+            String appcode = "26ce0a654aa542ea96c779ca367b54cd";
+            Map<String, String> query = new HashMap<>();
+            query.put("base64", base64);
+            HttpResponse response = HttpUtil.createPost(url)
+                    .header("Authorization", "APPCODE " + appcode)
+                    .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                    .body(JSONUtil.toJsonStr(query)).execute();
+            // {
+            //  "code": 200,//返回码，详见返回码说明
+            //  "msg": "成功",//返回码对应描述
+            //  "taskNo": "495451177190764093826703",//本次请求号
+            //  "data": {
+            //    "results": [
+            //      {
+            //        "score": "0.565209",//置信度
+            //        "name": "苏门答腊虎" //动物名称
+            //      }
+            //    ]
+            //  }
+            //}
+            Map<String, Object> responseMap = JSONUtil.toBean(response.body(), Map.class);
+            if (Integer.parseInt(responseMap.get("code").toString()) == 400){
+                throw new SaTokenException(400,"识别图片不准确");
+            }else if (Integer.parseInt(responseMap.get("code").toString()) == 500){
+                throw new SaTokenException(500,"识别系统异常");
+            }
+            return responseMap.get("name").toString();
+        }catch (Exception e){
+            log.error("宠物识别失败"+e.getMessage(),e);
+            throw new SaTokenException("宠物识别失败");
+        }
+
     }
 }
