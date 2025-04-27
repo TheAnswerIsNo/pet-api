@@ -76,4 +76,11 @@ public class DynamicService {
         dynamicRepository.removeById(id);
         attachmentService.removeAttachment(AttachmentEnum.DYNAMIC.getValue(), id);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void like(String id) {
+        Dynamic dynamic = dynamicRepository.getById(id);
+        dynamic.setLikeNum(dynamic.getLikeNum()+1);
+        dynamicRepository.updateById(dynamic);
+    }
 }

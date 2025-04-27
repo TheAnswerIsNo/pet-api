@@ -49,5 +49,12 @@ public class DynamicController extends BaseController {
         return SaResult.ok("删除成功");
     }
 
+    @PostMapping(value = "/like/{id}")
+    @ApiOperation(value = "点赞动态")
+    public SaResult like(@PathVariable("id") String id){
+        dynamicService.like(id);
+        return SaResult.ok("点赞成功");
+    }
+
 
 }

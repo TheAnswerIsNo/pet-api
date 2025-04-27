@@ -61,6 +61,9 @@ public class Pet {
     @AutoColumn(comment = "特点",notNull = true)
     private String characteristics;
 
+    @AutoColumn(comment = "用户id",notNull = true,length = 45)
+    private String userId;
+
     @InsertFillTime
     @AutoColumn(comment = "创建时间",notNull = true)
     private LocalDateTime createTime;

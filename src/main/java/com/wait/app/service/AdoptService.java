@@ -62,6 +62,7 @@ public class AdoptService {
     public void giveUp(GiveUpAdoptParam giveUpAdoptParam, String userId) {
         Pet pet = BeanUtil.copyProperties(giveUpAdoptParam, Pet.class);
         pet.setCharacteristics(JSONUtil.toJsonStr(giveUpAdoptParam.getCharacteristics()));
+        pet.setUserId(userId);
         petRepository.save(pet);
         GiveUpAdoptRecord giveUpAdoptRecord = GiveUpAdoptRecord.builder()
                 .petId(pet.getId())
@@ -92,8 +93,10 @@ public class AdoptService {
      * @param type type
      * @return List<AdoptListDTO>
      */
-    public List<AdoptListDTO> list(String type) {
-        List<Pet> petList = petRepository.lambdaQuery().eq(StrUtil.isNotBlank(type), Pet::getType, type)
+    public List<AdoptListDTO> list(String type,Integer self, String userId) {
+        List<Pet> petList = petRepository.lambdaQuery()
+                .eq(self.equals(1), Pet::getUserId, userId)
+                .eq(StrUtil.isNotBlank(type), Pet::getType, type)
                 .orderByDesc(Pet::getCreateTime)
                 .list();
         if (CollUtil.isEmpty(petList)){

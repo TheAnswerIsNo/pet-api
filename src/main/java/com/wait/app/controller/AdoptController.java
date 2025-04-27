@@ -46,8 +46,8 @@ public class AdoptController extends BaseController{
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "领养列表")
-    public SaResult apply(@RequestParam String type){
-        List<AdoptListDTO> list = adoptService.list(type);
+    public SaResult apply(@RequestParam String type,@RequestParam Integer self){
+        List<AdoptListDTO> list = adoptService.list(type,self,getUserId());
         return SaResult.data(list);
     }
 
