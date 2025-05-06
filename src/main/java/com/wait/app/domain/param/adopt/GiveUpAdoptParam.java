@@ -54,5 +54,5 @@ public class GiveUpAdoptParam {
     private String description;
     
     @ApiModelProperty( value = "照片" )
-    private List<MultipartFile> photos;
+    private MultipartFile photo;
 }

@@ -3,6 +3,7 @@ package com.wait.app.service;
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
@@ -71,8 +72,8 @@ public class AdoptService {
                 .build();
         giveUpAdoptRecordRepository.save(giveUpAdoptRecord);
         // 保存图片
-        if (CollUtil.isNotEmpty(giveUpAdoptParam.getPhotos())){
-            attachmentService.uploadAttachmentList(giveUpAdoptParam.getPhotos(), AttachmentEnum.PET.getValue(), pet.getId());
+        if (ObjUtil.isNotEmpty(giveUpAdoptParam.getPhoto())){
+            attachmentService.uploadAttachment(giveUpAdoptParam.getPhoto(), AttachmentEnum.PET.getValue(), pet.getId());
         }
     }
 
