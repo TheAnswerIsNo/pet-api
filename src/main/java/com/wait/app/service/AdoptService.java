@@ -177,4 +177,17 @@ public class AdoptService {
         }
 
     }
+
+    /**
+     * 删除送养记录
+     * @param id id
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void giveUpDelete(String id) {
+        GiveUpAdoptRecord giveUpAdoptRecord = giveUpAdoptRecordRepository.getById(id);
+        String petId = giveUpAdoptRecord.getPetId();
+        giveUpAdoptRecordRepository.removeById(id);
+        attachmentService.removeAttachment(AttachmentEnum.PET.getValue(), petId);
+        petRepository.removeById(petId);
+    }
 }

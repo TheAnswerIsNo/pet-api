@@ -37,6 +37,14 @@ public class AdoptController extends BaseController{
         return SaResult.ok("发布宠物信息成功");
     }
 
+    @GetMapping(value = "/give-up/delete")
+    @ApiOperation(value = "删除送养信息")
+    public SaResult giveUpDelete(@RequestParam String id){
+        adoptService.giveUpDelete(id);
+        return SaResult.ok("删除成功");
+    }
+
+
     @PostMapping(value = "/apply")
     @ApiOperation(value = "领养")
     public SaResult apply(@RequestBody ApplyAdoptParam applyAdoptParam){
