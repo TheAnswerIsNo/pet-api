@@ -62,7 +62,6 @@ public class AdoptService {
     @Transactional(rollbackFor = Exception.class)
     public void giveUp(GiveUpAdoptParam giveUpAdoptParam, String userId) {
         Pet pet = BeanUtil.copyProperties(giveUpAdoptParam, Pet.class);
-        pet.setCharacteristics(JSONUtil.toJsonStr(giveUpAdoptParam.getCharacteristics()));
         pet.setUserId(userId);
         petRepository.save(pet);
         GiveUpAdoptRecord giveUpAdoptRecord = GiveUpAdoptRecord.builder()

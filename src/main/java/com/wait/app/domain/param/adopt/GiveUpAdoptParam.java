@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 /**
  * @author 天
@@ -48,7 +47,7 @@ public class GiveUpAdoptParam {
     private String hair;
 
     @ApiModelProperty( value = "特点" )
-    private List<String> characteristics;
+    private String characteristics;
 
     @ApiModelProperty( value = "描述" )
     private String description;
